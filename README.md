@@ -5,8 +5,8 @@
   + SM Skinchooser support
   
 ##Compatible plugins:
-  + SM Skinchooser - only version 4.2
-  + Franug's Configurable Arms/Gloves Menu - only my version 1.2
+  + SM Skinchooser - only version 4.2 [(Download here)](https://github.com/NomisCZ/sm_skinchooser)
+  + Franug's Configurable Arms/Gloves Menu - only my version 1.2 (Coming soon)
   
 ------------------
 
