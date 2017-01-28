@@ -13,7 +13,7 @@
 ##FAQ:
 **1. Why do I see overlaps arms/gloves in spect OR after maximizing games?**
 
-  - Because Valve -_-, but first person see it normally.
+  - Because Valve -_-, but first person see it normally and if you don't minimize the game.
     
 **2. Is Franug's Arms menu plugin supported?**
  
