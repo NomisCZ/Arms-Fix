@@ -11,7 +11,7 @@
 ------------------
 
 ##FAQ:
-**1. Why do I see overlaps arms/gloves in spect?**
+**1. Why do I see overlaps arms/gloves in spect OR after maximizing games?**
 
   - Because Valve -_-, but first person see it normally.
     
