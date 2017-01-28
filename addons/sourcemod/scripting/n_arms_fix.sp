@@ -10,7 +10,7 @@ char defaultModels[][] = { "models/player/ctm_fbi.mdl", "models/player/tm_phoeni
 
 public Plugin myinfo = {
 
-	name = "Private: Skin & Arms Fix",
+	name = "Skin & Arms Fix",
 	author = "NomisCZ (-N-)",
 	description = "Arms fix",
 	version = "1.0",
