@@ -5,7 +5,8 @@
 #pragma semicolon 1
 #pragma newdecls required
 
-Handle forwardHandle;
+Handle armsHandle;
+Handle modelHandle;
 
 char defaultArms[][] = { "models/weapons/ct_arms.mdl", "models/weapons/t_arms.mdl" };
 char defaultModels[][] = { "models/player/ctm_fbi.mdl", "models/player/tm_phoenix.mdl" };
@@ -27,7 +28,8 @@ public void OnMapStart() {
 public void OnPluginStart() {
 
     RegPluginLibrary("n_arms_fix");
-    forwardHandle = CreateGlobalForward("ArmsFix_OnArmsSet", ET_Ignore, Param_Cell);
+    armsHandle = CreateGlobalForward("ArmsFix_OnArmsSafe", ET_Ignore, Param_Cell);
+    modelHandle = CreateGlobalForward("ArmsFix_OnModelSafe", ET_Ignore, Param_Cell);
 	
     HookEvent("player_spawn", Event_Spawn, EventHookMode_Post);
 } 
@@ -68,15 +70,34 @@ public Action Event_Spawn(Event event, const char[] name, bool dontBroadcast) {
 			SetEntPropString(client, Prop_Send, "m_szArmsModel", defaultArms[0]);
 		}
 		
-		CallArmsForward(client);
+		CreateTimer(0.2, Timer_CallForward, GetClientUserId(client), TIMER_FLAG_NO_MAPCHANGE);
 	}
 
 	return Plugin_Continue;
 } 
 
-void CallArmsForward(int client)
-{
-    Call_StartForward(forwardHandle);
+
+public Action Timer_CallForward(Handle timer, int userid) {
+
+	CallArmsForward(GetClientOfUserId(userid));
+	CreateTimer(0.0, Timer_CallModelForward, userid, TIMER_FLAG_NO_MAPCHANGE);
+}
+
+public Action Timer_CallModelForward(Handle timer, int userid) {
+
+	CallModelForward(GetClientOfUserId(userid));
+}
+
+void CallModelForward(int client) {
+
+    Call_StartForward(modelHandle);
+    Call_PushCell(client);
+    Call_Finish();
+}
+
+void CallArmsForward(int client) {
+
+    Call_StartForward(armsHandle);
     Call_PushCell(client);
     Call_Finish();
 }
