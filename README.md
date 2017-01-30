@@ -25,7 +25,7 @@
   
 **3. Can I combinate SM Skinchooser and Franug's Arms menu?**
  
-  - :white_check_mark: Yes, You can combinate SM Skinchooser and Arms menu without overlapping, but **you need my version of these plugins**.
+  - :white_check_mark: Yes, You can combinate SM Skinchooser and Arms menu without overlapping, but **you need Franug's Arms menu version >= 1.2 and SM Skinchooser >= 4.2.1**.
 
 **4. What about AC gloves?**
 
