@@ -1,9 +1,11 @@
 #include <sourcemod>
-#include <sdkhooks>
 #include <sdktools>
 #include <cstrike>
 
+#pragma semicolon 1
 #pragma newdecls required
+
+Handle forwardHandle;
 
 char defaultArms[][] = { "models/weapons/ct_arms.mdl", "models/weapons/t_arms.mdl" };
 char defaultModels[][] = { "models/player/ctm_fbi.mdl", "models/player/tm_phoenix.mdl" };
@@ -13,7 +15,7 @@ public Plugin myinfo = {
 	name = "Skin & Arms Fix",
 	author = "NomisCZ (-N-)",
 	description = "Arms fix",
-	version = "1.0",
+	version = "1.1",
 	url = "http://steamcommunity.com/id/olympic-nomis-p"
 }
 
@@ -23,26 +25,29 @@ public void OnMapStart() {
 }
 
 public void OnPluginStart() {
+
+    RegPluginLibrary("n_arms_fix");
+    forwardHandle = CreateGlobalForward("ArmsFix_OnArmsSet", ET_Ignore, Param_Cell);
 	
     HookEvent("player_spawn", Event_Spawn, EventHookMode_Post);
 } 
 
-public void PrecacheModels() {
+void PrecacheModels() {
 
-	for (int i; i < sizeof(defaultArms); i++) {
+	for (int i = 0; i < sizeof(defaultArms); i++) {
 		
-		PrecacheModel(defaultArms[i])
+		PrecacheModel(defaultArms[i]);
 	}
 	
-	for (int i; i < sizeof(defaultModels); i++) {
+	for (int i = 0; i < sizeof(defaultModels); i++) {
 		
-		PrecacheModel(defaultModels[i])
+		PrecacheModel(defaultModels[i]);
 	}
 }
 
-public Action Event_Spawn(Event gEventHook, const char[] gEventName, bool iDontBroadcast) {
+public Action Event_Spawn(Event event, const char[] name, bool dontBroadcast) {
 
-	int client = GetClientOfUserId(gEventHook.GetInt("userid"));
+	int client = GetClientOfUserId(event.GetInt("userid"));
 	
 	if (isValidClient(client) && IsPlayerAlive(client)) {
 	
@@ -63,10 +68,18 @@ public Action Event_Spawn(Event gEventHook, const char[] gEventName, bool iDontB
 			SetEntPropString(client, Prop_Send, "m_szArmsModel", defaultArms[0]);
 		}
 		
+		CallArmsForward(client);
 	}
 
 	return Plugin_Continue;
 } 
+
+void CallArmsForward(int client)
+{
+    Call_StartForward(forwardHandle);
+    Call_PushCell(client);
+    Call_Finish();
+}
 
 bool isValidClient(int client, bool bot = false) {
 
