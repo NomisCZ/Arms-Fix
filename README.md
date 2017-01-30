@@ -11,7 +11,8 @@
   + Added API for third-party SourceMod plugins
   
 ##Compatible plugins:
-  + (none yet)
+  (none yet)
+  
 ------------------
 
 ##FAQ:
