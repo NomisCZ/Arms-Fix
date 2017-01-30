@@ -2,17 +2,16 @@
 
 ##Last updates:
 
-**Update 1.0:**
-  + Init version
-  + SM Skinchooser support
-
 **Update 1.1:**
   + Syntax Updates
   + Added API for third-party SourceMod plugins
+
+**Update 1.0:**
+  + Init version
+  + SM Skinchooser support
   
 ##Compatible plugins:
-  (none yet)
-  
+  (none yet)  
 ------------------
 
 ##FAQ:
