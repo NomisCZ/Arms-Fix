@@ -1,8 +1,8 @@
 #include <sourcemod>
-#include <sdkhooks>
 #include <sdktools>
 #include <cstrike>
 
+#pragma semicolon 1
 #pragma newdecls required
 
 char defaultArms[][] = { "models/weapons/ct_arms.mdl", "models/weapons/t_arms.mdl" };
@@ -29,20 +29,20 @@ public void OnPluginStart() {
 
 public void PrecacheModels() {
 
-	for (int i; i < sizeof(defaultArms); i++) {
+	for (int i = 0; i < sizeof(defaultArms); i++) {
 		
-		PrecacheModel(defaultArms[i])
+		PrecacheModel(defaultArms[i]);
 	}
 	
-	for (int i; i < sizeof(defaultModels); i++) {
+	for (int i = 0; i < sizeof(defaultModels); i++) {
 		
-		PrecacheModel(defaultModels[i])
+		PrecacheModel(defaultModels[i]);
 	}
 }
 
-public Action Event_Spawn(Event gEventHook, const char[] gEventName, bool iDontBroadcast) {
+public Action Event_Spawn(Event event, const char[] name, bool dontBroadcast) {
 
-	int client = GetClientOfUserId(gEventHook.GetInt("userid"));
+	int client = GetClientOfUserId(event.GetInt("userid"));
 	
 	if (isValidClient(client) && IsPlayerAlive(client)) {
 	
