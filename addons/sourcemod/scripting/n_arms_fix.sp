@@ -30,7 +30,7 @@ public void OnPluginStart() {
     HookEvent("player_spawn", Event_Spawn, EventHookMode_Post);
 } 
 
-public void PrecacheModels() {
+void PrecacheModels() {
 
 	for (int i = 0; i < sizeof(defaultArms); i++) {
 		
