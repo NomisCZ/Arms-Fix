@@ -5,6 +5,8 @@
 #pragma semicolon 1
 #pragma newdecls required
 
+Handle forwardHandle;
+
 char defaultArms[][] = { "models/weapons/ct_arms.mdl", "models/weapons/t_arms.mdl" };
 char defaultModels[][] = { "models/player/ctm_fbi.mdl", "models/player/tm_phoenix.mdl" };
 
@@ -23,7 +25,8 @@ public void OnMapStart() {
 }
 
 public void OnPluginStart() {
-	
+
+    forwardHandle = CreateGlobalForward("ArmsFix_OnArmsSet", ET_Ignore, Param_Cell);
     HookEvent("player_spawn", Event_Spawn, EventHookMode_Post);
 } 
 
@@ -63,10 +66,18 @@ public Action Event_Spawn(Event event, const char[] name, bool dontBroadcast) {
 			SetEntPropString(client, Prop_Send, "m_szArmsModel", defaultArms[0]);
 		}
 		
+		CallArmsForward(client);
 	}
 
 	return Plugin_Continue;
 } 
+
+void CallArmsForward(int client)
+{
+    Call_StartForward(forwardHandle);
+    Call_PushCell(client);
+    Call_Finish();
+}
 
 bool isValidClient(int client, bool bot = false) {
 
