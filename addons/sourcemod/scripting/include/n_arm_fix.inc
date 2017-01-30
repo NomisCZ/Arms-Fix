@@ -10,7 +10,7 @@
  * @param	client			client index
  * @return  no return
  */
-forward void ArmsFix_OnArmsSet(int client);
+forward void ArmsFix_OnArmsSafe(int client);
 
 
 public SharedPlugin n_arm_fix_include_shared =

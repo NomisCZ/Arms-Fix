@@ -27,7 +27,7 @@ public void OnMapStart() {
 public void OnPluginStart() {
 
     RegPluginLibrary("n_arms_fix");
-    forwardHandle = CreateGlobalForward("ArmsFix_OnArmsSet", ET_Ignore, Param_Cell);
+    forwardHandle = CreateGlobalForward("ArmsFix_OnArmsSafe", ET_Ignore, Param_Cell);
 	
     HookEvent("player_spawn", Event_Spawn, EventHookMode_Post);
 } 
@@ -68,14 +68,19 @@ public Action Event_Spawn(Event event, const char[] name, bool dontBroadcast) {
 			SetEntPropString(client, Prop_Send, "m_szArmsModel", defaultArms[0]);
 		}
 		
-		CallArmsForward(client);
+		CreateTimer(0.2, Timer_CallForward, GetClientUserId(client), TIMER_FLAG_NO_MAPCHANGE);
 	}
 
 	return Plugin_Continue;
 } 
 
-void CallArmsForward(int client)
-{
+public Action Timer_CallForward(Handle timer, int userid) {
+
+	CallArmsForward(GetClientOfUserId(userid));
+}
+
+void CallArmsForward(int client) {
+
     Call_StartForward(forwardHandle);
     Call_PushCell(client);
     Call_Finish();
