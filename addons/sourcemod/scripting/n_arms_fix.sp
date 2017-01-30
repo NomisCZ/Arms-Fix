@@ -26,7 +26,9 @@ public void OnMapStart() {
 
 public void OnPluginStart() {
 
+    RegPluginLibrary("n_arms_fix");
     forwardHandle = CreateGlobalForward("ArmsFix_OnArmsSet", ET_Ignore, Param_Cell);
+	
     HookEvent("player_spawn", Event_Spawn, EventHookMode_Post);
 } 
 
