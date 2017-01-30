@@ -15,7 +15,7 @@ public Plugin myinfo = {
 	name = "Skin & Arms Fix",
 	author = "NomisCZ (-N-)",
 	description = "Arms fix",
-	version = "1.0",
+	version = "1.1",
 	url = "http://steamcommunity.com/id/olympic-nomis-p"
 }
 
