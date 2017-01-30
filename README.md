@@ -22,7 +22,7 @@
     
 **2. Are all plugins supported?**
  
-  - :white_check_mark: Yes, but the plugin **MUST** use API in order to gain this plugin's functionality. This is up to the developer of each plugin to implement.
+  - :white_check_mark: Yes, but the plugin **MUST** use our API in order to gain this plugin's functionality. This is up to the developer of each plugin to implement.
   
 **3. Can I combinate SM Skinchooser and Franug's Arms menu?**
  
