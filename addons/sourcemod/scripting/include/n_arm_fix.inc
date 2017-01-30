@@ -5,12 +5,20 @@
  
 
 /**
- * Called when it's OK for plugins to set arms.
+ * Called when it's safe to set arms.
  *
  * @param	client			client index
  * @return  no return
  */
 forward void ArmsFix_OnArmsSafe(int client);
+
+/**
+ * Called when it's safe to set player model.
+ *
+ * @param	client			client index
+ * @return  no return
+ */
+forward void ArmsFix_OnModelSafe(int client);
 
 
 public SharedPlugin n_arm_fix_include_shared =
