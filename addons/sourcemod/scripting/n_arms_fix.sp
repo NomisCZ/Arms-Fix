@@ -8,42 +8,52 @@
 Handle armsHandle;
 Handle modelHandle;
 
-char defaultArms[][] = { "models/weapons/ct_arms.mdl", "models/weapons/t_arms.mdl" };
-char defaultModels[][] = { "models/player/ctm_fbi.mdl", "models/player/tm_phoenix.mdl" };
+char defaultArms[2][PLATFORM_MAX_PATH] = { "models/weapons/t_arms.mdl", "models/weapons/ct_arms.mdl" };
+char defaultModels[2][PLATFORM_MAX_PATH] = { "models/player/tm_anarchist.mdl", "models/player/ctm_fbi.mdl" };
+
+//char stockModels[][] = { "models/player/tm_phoenix.mdl", "models/player/ctm_gign.mdl" };
+char stockModels[][] = { "models/weapons/t_arms.mdl", "models/weapons/ct_arms.mdl" };
 
 public Plugin myinfo = {
-
 	name = "Skin & Arms Fix",
-	author = "NomisCZ (-N-)",
+	author = "NomisCZ (-N-) | Headline | SHUFEN",
 	description = "Arms fix",
-	version = "1.1",
-	url = "http://steamcommunity.com/id/olympic-nomis-p"
+	version = "1.2",
+	url = "http://steamcommunity.com/id/olympic-nomis-p | https://github.com/headline22 | https://possession.tokyo"
+}
+
+public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
+
+	RegPluginLibrary("CSGO_ArmsFix");
+	
+	armsHandle = CreateGlobalForward("ArmsFix_OnArmsSafe", ET_Ignore, Param_Cell);
+	modelHandle = CreateGlobalForward("ArmsFix_OnModelSafe", ET_Ignore, Param_Cell);
+	
+	return APLRes_Success;
 }
 
 public void OnMapStart() {
 
-	PrecacheModels();
+	char sCurrentMap[256];
+	GetCurrentMap(sCurrentMap, sizeof(sCurrentMap));
+	CheckMapsKv(sCurrentMap);
 }
 
 public void OnPluginStart() {
 
-    RegPluginLibrary("n_arms_fix");
-    armsHandle = CreateGlobalForward("ArmsFix_OnArmsSafe", ET_Ignore, Param_Cell);
-    modelHandle = CreateGlobalForward("ArmsFix_OnModelSafe", ET_Ignore, Param_Cell);
-	
-    HookEvent("player_spawn", Event_Spawn, EventHookMode_Post);
+	HookEvent("player_spawn", Event_Spawn, EventHookMode_Post);
 } 
 
 void PrecacheModels() {
 
 	for (int i = 0; i < sizeof(defaultArms); i++) {
-		
-		PrecacheModel(defaultArms[i]);
+		if(defaultArms[i][0] && !IsModelPrecached(defaultArms[i]))
+			PrecacheModel(defaultArms[i]);
 	}
 	
 	for (int i = 0; i < sizeof(defaultModels); i++) {
-		
-		PrecacheModel(defaultModels[i]);
+		if(defaultModels[i][0] && !IsModelPrecached(defaultModels[i]))
+			PrecacheModel(defaultModels[i]);
 	}
 }
 
@@ -51,60 +61,140 @@ public Action Event_Spawn(Event event, const char[] name, bool dontBroadcast) {
 
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	
-	if (isValidClient(client) && IsPlayerAlive(client)) {
-	
+	if (IsValidClient(client) && IsPlayerAlive(client)) {
+		
 		CS_UpdateClientModel(client);
 
 		SetEntPropString(client, Prop_Send, "m_szArmsModel", "");
 		
-		int team = GetClientTeam(client);
+		int iTeam = (GetClientTeam(client) == CS_TEAM_CT ? 1 : 0);
 		
-		if (team == CS_TEAM_T) {
-			
-			SetEntityModel(client, defaultModels[1]);
-			SetEntPropString(client, Prop_Send, "m_szArmsModel", defaultArms[1]);
-
-		} else if (team == CS_TEAM_CT) {
-			
-			SetEntityModel(client, defaultModels[0]);
-			SetEntPropString(client, Prop_Send, "m_szArmsModel", defaultArms[0]);
+		if(defaultModels[iTeam][0] && IsModelPrecached(defaultModels[iTeam])) {
+			SetEntityModel(client, defaultModels[iTeam]);
+		}
+		if(defaultArms[iTeam][0] && IsModelPrecached(defaultArms[iTeam])) {
+			SetEntPropString(client, Prop_Send, "m_szArmsModel", defaultArms[iTeam]);
 		}
 		
 		CreateTimer(0.2, Timer_CallForward, GetClientUserId(client), TIMER_FLAG_NO_MAPCHANGE);
 	}
 
 	return Plugin_Continue;
-} 
-
+}
 
 public Action Timer_CallForward(Handle timer, int userid) {
 
 	CallArmsForward(GetClientOfUserId(userid));
-	CreateTimer(0.0, Timer_CallModelForward, userid, TIMER_FLAG_NO_MAPCHANGE);
+	RequestFrame(Frame_CallModelForward, userid);
 }
 
-public Action Timer_CallModelForward(Handle timer, int userid) {
+void Frame_CallModelForward(int userid) {
 
 	CallModelForward(GetClientOfUserId(userid));
 }
 
 void CallModelForward(int client) {
 
-    Call_StartForward(modelHandle);
-    Call_PushCell(client);
-    Call_Finish();
+	Call_StartForward(modelHandle);
+	Call_PushCell(client);
+	Call_Finish();
 }
 
 void CallArmsForward(int client) {
 
-    Call_StartForward(armsHandle);
-    Call_PushCell(client);
-    Call_Finish();
+	Call_StartForward(armsHandle);
+	Call_PushCell(client);
+	Call_Finish();
 }
 
-bool isValidClient(int client, bool bot = false) {
+bool IsValidClient(int client, bool bot = false) {
 
 	if (client > 0 && client <= MaxClients && IsClientConnected(client) && IsClientInGame(client) && (bot ? IsFakeClient(client) : !IsFakeClient(client))) 
 		return true;
 	return false;
+}
+
+stock bool CheckMapsKv(const char[] sCurrentMap) {
+
+	Handle kv = CreateKeyValues("GameModes.txt");
+	if (FileToKeyValues(kv, "gamemodes.txt")) {
+		if (KvJumpToKey(kv, "maps")) {
+			if (KvJumpToKey(kv, sCurrentMap)) {
+				char sBuffer[PLATFORM_MAX_PATH];
+				if (KvJumpToKey(kv, "t_models")) {
+					if (KvGotoFirstSubKey(kv, false)) {
+						do {
+							KvGetSectionName(kv, sBuffer, sizeof(sBuffer));
+							if(sBuffer[0] == '\0')
+								continue;
+							SplitString(sBuffer, "_var", sBuffer, sizeof(sBuffer));
+							char sPathBuffer[PLATFORM_MAX_PATH];
+							FormatEx(sPathBuffer, sizeof(sPathBuffer), "models/player/%s.mdl", sBuffer);
+							if(StrEqual(sPathBuffer, defaultModels[CS_TEAM_T-2], false))
+								strcopy(defaultModels[CS_TEAM_T-2], sizeof(defaultModels[]), stockModels[CS_TEAM_T-2]);
+							break;
+						} while (KvGotoNextKey(kv));
+					}
+					KvGoBack(kv);
+				}
+				KvGoBack(kv);
+				if (KvJumpToKey(kv, "ct_models")) {
+					if (KvGotoFirstSubKey(kv, false)) {
+						do {
+							KvGetSectionName(kv, sBuffer, sizeof(sBuffer));
+							if(sBuffer[0] == '\0')
+								continue;
+							SplitString(sBuffer, "_var", sBuffer, sizeof(sBuffer));
+							char sPathBuffer[PLATFORM_MAX_PATH];
+							FormatEx(sPathBuffer, sizeof(sPathBuffer), "models/player/%s.mdl", sBuffer);
+							if(StrEqual(sPathBuffer, defaultModels[CS_TEAM_CT-2], false))
+								strcopy(defaultModels[CS_TEAM_CT-2], sizeof(defaultModels[]), stockModels[CS_TEAM_CT-2]);
+							break;
+						} while (KvGotoNextKey(kv));
+					}
+				}
+			}
+		}
+	}
+	kv = CreateKeyValues(sCurrentMap);
+	char sPath[PLATFORM_MAX_PATH];
+	FormatEx(sPath, sizeof(sPath), "maps/%s.kv", sCurrentMap);
+	if (FileToKeyValues(kv, sPath)) {
+		char sBuffer[PLATFORM_MAX_PATH];
+		if (KvJumpToKey(kv, "t_models")) {
+			if (KvGotoFirstSubKey(kv, false)) {
+				do {
+					KvGetSectionName(kv, sBuffer, sizeof(sBuffer));
+					if(sBuffer[0] == '\0')
+						continue;
+					SplitString(sBuffer, "_var", sBuffer, sizeof(sBuffer));
+					char sPathBuffer[PLATFORM_MAX_PATH];
+					FormatEx(sPathBuffer, sizeof(sPathBuffer), "models/player/%s.mdl", sBuffer);
+					if(StrEqual(sPathBuffer, defaultModels[CS_TEAM_T-2], false))
+						strcopy(defaultModels[CS_TEAM_T-2], sizeof(defaultModels[]), stockModels[CS_TEAM_T-2]);
+					break;
+				} while (KvGotoNextKey(kv));
+			}
+			KvGoBack(kv);
+		}
+		KvGoBack(kv);
+		if (KvJumpToKey(kv, "ct_models")) {
+			if (KvGotoFirstSubKey(kv, false)) {
+				do {
+					KvGetSectionName(kv, sBuffer, sizeof(sBuffer));
+					if(sBuffer[0] == '\0')
+						continue;
+					SplitString(sBuffer, "_var", sBuffer, sizeof(sBuffer));
+					char sPathBuffer[PLATFORM_MAX_PATH];
+					FormatEx(sPathBuffer, sizeof(sPathBuffer), "models/player/%s.mdl", sBuffer);
+					if(StrEqual(sPathBuffer, defaultModels[CS_TEAM_CT-2], false))
+						strcopy(defaultModels[CS_TEAM_CT-2], sizeof(defaultModels[]), stockModels[CS_TEAM_CT-2]);
+					break;
+				} while (KvGotoNextKey(kv));
+			}
+		}
+	}
+	delete kv;
+
+	PrecacheModels();
 }
