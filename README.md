@@ -15,7 +15,8 @@
   + SM Skinchooser support
   
 ##Compatible plugins:
-  (none yet)  
+  + SM Skinchooser - only version >= 4.2.1 [(download here)](https://github.com/NomisCZ/sm_skinchooser)
+  
 ------------------
 
 ##FAQ:
