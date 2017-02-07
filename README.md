@@ -2,6 +2,10 @@
 
 ##Last updates:
 
+**Update 1.2:**
+  + Methods update
+  + Default arms / models change
+  
 **Update 1.1:**
   + Syntax Updates
   + Added API for third-party SourceMod plugins
