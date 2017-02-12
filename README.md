@@ -16,6 +16,7 @@
   
 ##Compatible plugins:
   + SM Skinchooser - only version >= 4.2.1 [(download here)](https://github.com/NomisCZ/sm_skinchooser)
+  + [CS:GO] Skins Chooser - only version >= 1.2.4.Kento.2 [(download here)](https://github.com/rogeraabbccdd/CSGO_SkinsChooser)
   
 ------------------
 
