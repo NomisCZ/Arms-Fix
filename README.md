@@ -15,7 +15,7 @@
   + SM Skinchooser support
   
 ##Compatible plugins:
-  + SM Skinchooser - only version >= 4.2.1 [(download here)](https://github.com/NomisCZ/sm_skinchooser)
+  + SM Skinchooser - only version 4.2.1 [(download here)](https://github.com/NomisCZ/sm_skinchooser)
   + [CS:GO] Skins Chooser - only version >= 1.2.4.Kento.2 [(download here)](https://github.com/rogeraabbccdd/CSGO_SkinsChooser)
   
 ------------------
@@ -31,7 +31,7 @@
   
 **3. Can I combinate SM Skinchooser and Franug's Arms menu?**
  
-  - :white_check_mark: Yes, You can combinate SM Skinchooser and Arms menu without overlapping, but **you need Franug's Arms menu version >= 1.2 and SM Skinchooser >= 4.2.1**.
+  - :white_check_mark: Yes, You can combinate SM Skinchooser and Arms menu without overlapping, but **you need Franug's Arms menu version >= 1.2 and SM Skinchooser 4.2.1**.
 
 **4. What about AC gloves?**
 
