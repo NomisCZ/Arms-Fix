@@ -1,7 +1,12 @@
 # -N- Arms Fix
 
 ## Last updates:
-
+**Update 1.5:**
+  + New method for setting default skins
+  + New natives: ArmsFix_HasDefaultArms, ArmsFix_SetDefaults
+  + Compatible with most maps  
+  + Code optimizations
+  
 **Update 1.2:**
   + Methods update
   + Default arms / models change
