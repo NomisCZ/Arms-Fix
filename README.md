@@ -3,7 +3,7 @@
 ## Last updates:
 **Update 1.5.5 (11.6. 2017):**
   + New native: ArmsFix_SetDefaultArms - force sets default arms
-  + New cvar: sm_arms_fix_autospawn - Enable/disable auto spawn fix - You can manually use plugin natives in own plugin.
+  + New cvar: sm_arms_fix_autospawn - Enable/disable auto spawn fix - You can manually use plugin natives in your plugin.
   
 **Update 1.5 (14.5. 2017):**
   + New method for setting default skins
@@ -30,7 +30,8 @@
 ## FAQ:
 **1. Why do I see overlaps arms/gloves in spect OR after maximizing game?**
 
-  - Because Valve -_-, but first person see it normally and if you don't minimize the game.
+  - Use version >= 1.5.5 and set **sm_arms_fix_autospawn "0"**
+  - Call manually **ArmsFix_SetDefaults(client)** function before you set player arms in own plugin - see skin_changer.sp example in examples.
     
 **2. Are all plugins supported?**
  
