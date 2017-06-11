@@ -1,6 +1,10 @@
 # -N- Arms Fix
 
 ## Last updates:
+**Update 1.5.5 (11.6. 2017):**
+  + New native: ArmsFix_SetDefaultArms - force sets default arms
+  + New cvar: sm_arms_fix_autospawn - Enable/disable auto spawn fix - You can manually use plugin natives in own plugin.
+  
 **Update 1.5 (14.5. 2017):**
   + New method for setting default skins
   + New natives: ArmsFix_HasDefaultArms, ArmsFix_SetDefaults
