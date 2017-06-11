@@ -18,6 +18,9 @@
 Handle armsHandle;
 Handle modelHandle;
 
+ConVar autoSpawnCvar = null;
+bool autoSpawn = true;
+
 char defaultCTFbiModels[][] = {
 	"ctm_fbi.mdl",
 	"ctm_fbi_variantA.mdl",
@@ -59,16 +62,20 @@ public Plugin myinfo = {
 	name = "Arms Fix",
 	author = "NomisCZ (-N-)",
 	description = "Arms fix",
-	version = "1.5",
+	version = "1.5.5",
 	url = "http://steamcommunity.com/id/olympic-nomis-p"
 }
 
 public void OnPluginStart() {
 
 	HookEvent("player_spawn", Event_PlayerSpawn);
+	autoSpawnCvar = CreateConVar("sm_arms_fix_autospawn", "1", "Enable auto spawn fix (automatically sets default gloves)? 0 = False, 1 = True", _, true, 0.0, true, 1.0);
+	autoSpawnCvar.AddChangeHook(OnCvarChanged);
 }
 
 public void OnConfigsExecuted() {
+
+	autoSpawn = autoSpawnCvar.BoolValue;
 
 	PrecacheModels();
 	PrecacheModels(true);
@@ -83,8 +90,16 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	modelHandle = CreateGlobalForward("ArmsFix_OnModelSafe", ET_Ignore, Param_Cell);
 	CreateNative("ArmsFix_SetDefaults", Native_SetDefault);
 	CreateNative("ArmsFix_HasDefaultArms", Native_HasDefaultArms);
+	CreateNative("ArmsFix_SetDefaultArms", Native_SetDefaultArms);
 
 	return APLRes_Success;
+}
+
+public void OnCvarChanged(ConVar convar, const char[] oldValue, const char[] newValue)
+{
+	if (convar == autoSpawnCvar) {
+		autoSpawn = view_as<bool>(StringToInt(newValue));
+	}
 }
 
 public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast) {
@@ -93,7 +108,8 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 
 	if ((!IsValidClient(client) && !IsPlayerAlive(client) || IsFakeClient(client))) return;
 
-	SetDefault(client);
+	if (autoSpawn) SetDefault(client);
+	
 	CallForwards(client);
 }
 
@@ -126,6 +142,12 @@ public int Native_SetDefault(Handle plugin, int numParams) {
 
     int client = GetNativeCell(1);
     SetDefault(client);
+}
+
+public int Native_SetDefaultArms(Handle plugin, int numParams) {
+
+    int client = GetNativeCell(1);
+    SetDefaultArms(client);
 }
 
 public int Native_HasDefaultArms(Handle plugin, int numParams) {
@@ -204,6 +226,16 @@ public void SetDefault(int client) {
 	}
 }
 
+public void SetDefaultArms(int client) {
+
+	if ((!IsValidClient(client) && !IsPlayerAlive(client) || IsFakeClient(client))) return;
+
+	int clientTeam = (GetClientTeam(client) == CS_TEAM_T ? 0 : 1);
+
+	SetEntPropString(client, Prop_Send, "m_szArmsModel", "");
+	SetEntPropString(client, Prop_Send, "m_szArmsModel", defaultArms[clientTeam]);
+}
+
 char GetNewRandomModel(int client) {
 
 	char clientModel[256];
@@ -278,6 +310,5 @@ bool hasDefaultArms(int client) {
 
 	char clientModel[256];
 	GetEntPropString(client, Prop_Send, "m_szArmsModel", clientModel, sizeof(clientModel));
-
 	return (StrEqual(clientModel, defaultArms[0]) || StrEqual(clientModel, defaultArms[1]) || StrEqual(clientModel, "")) ? true : false;
 }
