@@ -62,7 +62,7 @@ public Plugin myinfo = {
 	name = "Arms Fix",
 	author = "NomisCZ (-N-)",
 	description = "Arms fix",
-	version = "1.5.5",
+	version = "1.6",
 	url = "http://steamcommunity.com/id/olympic-nomis-p"
 }
 
@@ -91,6 +91,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("ArmsFix_SetDefaults", Native_SetDefault);
 	CreateNative("ArmsFix_HasDefaultArms", Native_HasDefaultArms);
 	CreateNative("ArmsFix_SetDefaultArms", Native_SetDefaultArms);
+	CreateNative("ArmsFix_RefreshView", Native_RefreshView);
 
 	return APLRes_Success;
 }
@@ -109,7 +110,7 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 	if ((!IsValidClient(client) && !IsPlayerAlive(client) || IsFakeClient(client))) return;
 
 	if (autoSpawn) SetDefault(client);
-	
+
 	CallForwards(client);
 }
 
@@ -148,6 +149,12 @@ public int Native_SetDefaultArms(Handle plugin, int numParams) {
 
     int client = GetNativeCell(1);
     SetDefaultArms(client);
+}
+
+public int Native_RefreshView(Handle plugin, int numParams) {
+
+    int client = GetNativeCell(1);
+    RefreshView(client);
 }
 
 public int Native_HasDefaultArms(Handle plugin, int numParams) {
@@ -212,15 +219,17 @@ public void SetDefault(int client) {
 
 	if (IsModelPrecached(newModel)) {
 
-		CS_UpdateClientModel(client);
+		RefreshView(client);
 		SetEntityModel(client, newModel);
+
 	} else {
 
-		PrintToChat(client, "There is a problem with skin %s precaching. Please contact server administrator", newModel);
+		PrintToChat(client, "[-N- Arms Fix] There is a problem with skin apply. Some plugin uses bad order causing overlapping: model -> arms, instead of arms -> model.");
 		return;
 	}
 
 	if (!hasDefaultArms(client)) {
+
 		SetEntPropString(client, Prop_Send, "m_szArmsModel", "");
 		SetEntPropString(client, Prop_Send, "m_szArmsModel", defaultArms[clientTeam]);
 	}
@@ -234,6 +243,46 @@ public void SetDefaultArms(int client) {
 
 	SetEntPropString(client, Prop_Send, "m_szArmsModel", "");
 	SetEntPropString(client, Prop_Send, "m_szArmsModel", defaultArms[clientTeam]);
+}
+
+public void RefreshView(int client) {
+
+	CreateTimer(0.0, RemoveItemTimer, EntIndexToEntRef(client), TIMER_FLAG_NO_MAPCHANGE);
+}
+
+public Action RemoveItemTimer(Handle timer, int ref)
+{
+	int client = EntRefToEntIndex(ref);
+
+	if (client != INVALID_ENT_REFERENCE)
+	{
+		int item = GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon");
+
+		if (item > 0)
+		{
+			RemovePlayerItem(client, item);
+
+			DataPack playerData = new DataPack();
+			playerData.WriteCell(EntIndexToEntRef(client));
+			playerData.WriteCell(EntIndexToEntRef(item));
+
+			CreateTimer(0.15, AddItemTimer, playerData, TIMER_FLAG_NO_MAPCHANGE);
+		}
+	}
+}
+
+public Action AddItemTimer(Handle timer, DataPack playerData)
+{
+	int client, item;
+
+	playerData.Reset();
+	client = EntRefToEntIndex(playerData.ReadCell());
+	item = EntRefToEntIndex(playerData.ReadCell());
+
+	if (client != INVALID_ENT_REFERENCE && item != INVALID_ENT_REFERENCE)
+	{
+		EquipPlayerWeapon(client, item);
+	}
 }
 
 char GetNewRandomModel(int client) {
@@ -310,5 +359,6 @@ bool hasDefaultArms(int client) {
 
 	char clientModel[256];
 	GetEntPropString(client, Prop_Send, "m_szArmsModel", clientModel, sizeof(clientModel));
+
 	return (StrEqual(clientModel, defaultArms[0]) || StrEqual(clientModel, defaultArms[1]) || StrEqual(clientModel, "")) ? true : false;
 }

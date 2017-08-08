@@ -29,12 +29,20 @@ forward void ArmsFix_OnModelSafe(int client);
 native int ArmsFix_SetDefaults(int client);
 
 /**
- * Set default  arms
+ * Set default arms
  *
  * @param	client			client index
  * @return  no return
  */
 native int ArmsFix_SetDefaultArms(int client);
+
+/**
+ * Refresh player view
+ *
+ * @param	client			client index
+ * @return  no return
+ */
+native int ArmsFix_RefreshView(int client);
 
 /**
  * Has default arms?
