@@ -278,6 +278,8 @@ public Action AddItemTimer(Handle timer, DataPack playerData)
 	playerData.Reset();
 	client = EntRefToEntIndex(playerData.ReadCell());
 	item = EntRefToEntIndex(playerData.ReadCell());
+	
+	delete playerData;
 
 	if (client != INVALID_ENT_REFERENCE && item != INVALID_ENT_REFERENCE)
 	{
