@@ -2,7 +2,7 @@
 
 ## Last updates:
 **Update 1.6.1 (19.1. 2019):**
-  + Memory leak fix - Thanks Bara (https://github.com/Bara)
+  + Fix possible memory leak - Thanks Bara (https://github.com/Bara)
 
 **Update 1.6 (8.8. 2017):**
   + New native: ArmsFix_RefreshView - refresh player view
