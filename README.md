@@ -1,6 +1,9 @@
 # -N- Arms Fix
 
 ## Last updates:
+**Update 2.0 (SOON):**
+  + New arms fix method, supports all maps
+
 **Update 1.6.1 (19.1. 2019):**
   + Fix possible memory leak - Thanks Bara (https://github.com/Bara)
 
@@ -29,11 +32,7 @@
 **Update 1.0:**
   + Init version
   + SM Skinchooser support
-  
-## Compatible plugins:
-  
+
 ------------------
 
 ## FAQ:
-**1. Are all plugins supported?**
-  - :white_check_mark: Yes, but the plugin **MUST** use our API in order to gain this plugin's functionality. This is up to the developer of each plugin to implement.
