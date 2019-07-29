@@ -19,8 +19,8 @@
 #define LEGACY_MODELS_PATH          "models/player/custom_player/legacy/"
 #define MODELS_PATH                 "models/player/"
 
-static int g_iFileChangeTime;
-static int g_iProtectedMapsTime;
+static int g_iConfigFileChange;
+static int g_iProtectedMapsFileChange;
 
 ConVar g_cvAutoSpawnCvar;
 
@@ -76,11 +76,11 @@ ArrayList g_aMapCTModels = null;
 
 public Plugin myinfo = 
 {
-	name = "-N- Arms Fix",
-	author = "NomisCZ (-N-)",
-	description = "CS:GO models arms fix",
-	version = PLUGIN_VERSION,
-	url = "https://github.com/NomisCZ"
+    name = "-N- Arms Fix",
+    author = "NomisCZ (-N-)",
+    description = "CS:GO models arms fix",
+    version = PLUGIN_VERSION,
+    url = "https://github.com/NomisCZ"
 };
 
 public void OnPluginStart()
@@ -121,7 +121,7 @@ public void OnMapStart()
 
 public void OnConfigsExecuted()
 {
-	g_bAutoSpawn = g_cvAutoSpawnCvar.BoolValue;
+    g_bAutoSpawn = g_cvAutoSpawnCvar.BoolValue;
 }
 
 public void OnConVarChanged(ConVar convar, const char[] oldValue, const char[] newValue)
@@ -222,9 +222,9 @@ public void LoadProtectedMaps()
 
     int fileLastChangeTime = GetFileTime(g_sProtectedMapsFilePath, FileTime_LastChange);
 
-    if (fileLastChangeTime != g_iProtectedMapsTime) {
+    if (fileLastChangeTime != g_iProtectedMapsFileChange) {
 
-        g_iProtectedMapsTime = fileLastChangeTime;
+        g_iProtectedMapsFileChange = fileLastChangeTime;
         g_bProtectedMapsChanged = true;
 
     } else {
@@ -243,7 +243,8 @@ public void GenerateConfigFiles()
         return;
     }
 
-    if ((GetFileTime("gamemodes_server.txt", FileTime_LastChange) == g_iFileChangeTime) && !g_bProtectedMapsChanged) {
+    if ((GetFileTime("gamemodes_server.txt", FileTime_LastChange) == g_iConfigFileChange) && !g_bProtectedMapsChanged) {
+
         PrintToServer("%s Nothing changed, config is ready.", PLUGIN_TAG);
         return;
     }
@@ -376,7 +377,7 @@ public void GenerateConfigFiles()
     delete kvServer;
     delete kvCustom;
     
-    g_iFileChangeTime = GetFileTime("gamemodes_server.txt", FileTime_LastChange);
+    g_iConfigFileChange = GetFileTime("gamemodes_server.txt", FileTime_LastChange);
 }
 
 public void GetMapConfig()
@@ -401,6 +402,7 @@ public void GetMapConfig()
     }
 
     if (inError) {
+
         _GetMapConfig_Done(false);
         return;
     }
@@ -660,8 +662,9 @@ public bool ExportKvToFile(KeyValues kv, const char[] file)
 { 
     File fh = OpenFile(file, "wb"); 
      
-    if (fh == null) 
-        return false; 
+    if (fh == null) {
+        return false;
+    } 
      
     IterateKvKeys(kv, fh, 0); 
      
@@ -686,15 +689,21 @@ public void IterateKvKeys(KeyValues kv, File fh, int tab)
      
     WriteKvLine(fh, tab, "{"); 
      
-    if (kv.GotoFirstSubKey(false)) { 
-        do { 
-            if (kv.GetDataType(NULL_STRING) == KvData_None) 
-                IterateKvKeys(kv, fh, tab + 1); 
-            else { 
+    if (kv.GotoFirstSubKey(false)) {
+
+        do {
+
+            if (kv.GetDataType(NULL_STRING) == KvData_None) {
+
+                IterateKvKeys(kv, fh, tab + 1);
+
+            } else {
+
                 kv.GetSectionName(buffer, sizeof(buffer)); 
                 kv.GetString(NULL_STRING, buffer2, sizeof(buffer2)); 
                 WriteKvLine(fh, tab + 1, "\"%s\"        \"%s\"", buffer, buffer2); 
-            } 
+            }
+
         } while (kv.GotoNextKey(false)); 
          
         kv.GoBack(); 
@@ -712,20 +721,23 @@ public void IterateKvKeys(KeyValues kv, File fh, int tab)
 public void WriteKvLine(File fh, int tab, const char[] string, any ...) 
 { 
     char buffer[512]; 
+
     VFormat(buffer, sizeof(buffer), string, 4); 
-    Format(buffer, sizeof(buffer), "%s\n", buffer); 
-    for (int i = 0; i < tab; i++) 
+    Format(buffer, sizeof(buffer), "%s\n", buffer);
+
+    for (int i = 0; i < tab; i++) {
         Format(buffer, sizeof(buffer), "    %s", buffer); 
+    }
+
     fh.WriteString(buffer, false); 
 }
 
 bool IsValidClient(int client, bool AllowDead = true, bool AllowBots = false)
 {
-	if (!(1 <= client <= MaxClients) || !IsClientInGame(client) || (IsFakeClient(client) && !AllowBots) || IsClientSourceTV(client) || IsClientReplay(client) || (!AllowDead && !IsPlayerAlive(client)))
-	{
-		return false;
-	}
-	return true;
+    if (!(1 <= client <= MaxClients) || !IsClientInGame(client) || (IsFakeClient(client) && !AllowBots) || IsClientSourceTV(client) || IsClientReplay(client) || (!AllowDead && !IsPlayerAlive(client))) {
+        return false;
+    }
+    return true;
 }
 
 public bool HasClientGloves(int client)
