@@ -1,6 +1,9 @@
 # -N- Arms Fix
 
 ## Last updates:
+**Update 2.0.1 (30.7.2019):**
+  + Fix first time config generating
+  
 **Update 2.0 (29.7.2019):**
   + New arms fix method, supports all maps
 
