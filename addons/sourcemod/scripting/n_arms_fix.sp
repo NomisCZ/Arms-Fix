@@ -11,7 +11,7 @@
 #pragma newdecls required
 
 #define PLUGIN_TAG "[-N- Arms Fix]"
-#define PLUGIN_VERSION "2.0"
+#define PLUGIN_VERSION "2.0.1"
 
 #define TEAM_T 		0
 #define TEAM_CT     1
@@ -93,6 +93,7 @@ public void OnPluginStart()
     BuildPath(Path_SM, g_sProtectedMapsFilePath, sizeof(g_sProtectedMapsFilePath), "configs/N_ArmsFix_ProtectedMaps.txt");
 
     InitDefaultModels();
+    GenerateConfigFiles();
 }
 
 public void OnPluginEnd()
