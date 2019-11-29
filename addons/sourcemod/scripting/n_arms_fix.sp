@@ -23,10 +23,12 @@ static int g_iConfigFileChange;
 static int g_iProtectedMapsFileChange;
 
 ConVar g_cvAutoSpawnCvar;
+ConVar g_cvAutoSpawnBotsCvar;
 
 Handle g_fOnClientReady;
 
 bool g_bAutoSpawn;
+bool g_bAutoSpawnBots;
 bool g_bLegacyModels = true;
 bool g_bProtectedMapsChanged;
 
@@ -88,7 +90,10 @@ public void OnPluginStart()
     HookEvent("player_spawn", Event_PlayerSpawn);
 
     g_cvAutoSpawnCvar = CreateConVar("sm_arms_fix_autospawn", "1", "Enable auto spawn fix (automatically sets default gloves)? 0 = False, 1 = True", _, true, 0.0, true, 1.0);
+    g_cvAutoSpawnBotsCvar = CreateConVar("sm_arms_fix_bots", "1", "Enable auto spawn fix for bots? 0 = False, 1 = True", _, true, 0.0, true, 1.0);
+
     g_cvAutoSpawnCvar.AddChangeHook(OnConVarChanged);
+    g_cvAutoSpawnBotsCvar.AddChangeHook(OnConVarChanged);
 
     BuildPath(Path_SM, g_sProtectedMapsFilePath, sizeof(g_sProtectedMapsFilePath), "configs/N_ArmsFix_ProtectedMaps.txt");
 
@@ -123,12 +128,15 @@ public void OnMapStart()
 public void OnConfigsExecuted()
 {
     g_bAutoSpawn = g_cvAutoSpawnCvar.BoolValue;
+    g_bAutoSpawnBots = g_cvAutoSpawnBotsCvar.BoolValue;
 }
 
 public void OnConVarChanged(ConVar convar, const char[] oldValue, const char[] newValue)
 {
     if (convar == g_cvAutoSpawnCvar) {
         g_bAutoSpawn = view_as<bool>(StringToInt(newValue));
+    } else if (convar == g_cvAutoSpawnBotsCvar) {
+        g_bAutoSpawnBots = view_as<bool>(StringToInt(newValue));
     }
 }
 
@@ -150,7 +158,7 @@ public Action Event_PlayerSpawn(Event event, const char[] name, bool dontBroadca
 {
     int client = GetClientOfUserId(event.GetInt("userid"));
 
-    if (!IsValidClient(client, false)) {
+    if (!IsValidClient(client, false, g_bAutoSpawnBots)) {
         return;
     }
 
@@ -462,7 +470,7 @@ public void SetClientDefault(int client)
 
 public void SetClientDefaultModel(int client)
 {
-    if (!IsValidClient(client, false)) {
+    if (!IsValidClient(client, false, g_bAutoSpawnBots)) {
         return;
     }
 
@@ -471,7 +479,7 @@ public void SetClientDefaultModel(int client)
 
 public void SetClientDefaultArms(int client)
 {
-    if (!IsValidClient(client, false) || HasClientGloves(client)) {
+    if (!IsValidClient(client, false, g_bAutoSpawnBots) || HasClientGloves(client)) {
         return;
     }
 
