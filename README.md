@@ -1,6 +1,9 @@
 # -N- Arms Fix
 
 ## Last updates:
+**Update 2.0.2 (29.11.2019):**
+  + Add cvar enable auto spawn fix for bots
+  
 **Update 2.0.1 (30.7.2019):**
   + Fix first time config generating
   
