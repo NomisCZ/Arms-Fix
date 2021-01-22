@@ -1,6 +1,9 @@
 # -N- Arms Fix
 
-## Last updates:
++## Last updates:
+**Update 2.0.3 (22.1.2021):**
+  + Fix crash on some Valve maps (#6)
+  
 **Update 2.0.2 (29.11.2019):**
   + Add cvar enable auto spawn fix for bots
   

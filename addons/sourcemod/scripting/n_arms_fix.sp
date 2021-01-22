@@ -11,7 +11,7 @@
 #pragma newdecls required
 
 #define PLUGIN_TAG "[-N- Arms Fix]"
-#define PLUGIN_VERSION "2.0.2"
+#define PLUGIN_VERSION "2.0.3"
 
 #define TEAM_T 		0
 #define TEAM_CT     1
