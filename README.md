@@ -1,6 +1,6 @@
 # -N- Arms Fix
 
-+## Last updates:
+## Last updates:
 **Update 2.0.3 (22.1.2021):**
   + Fix crash on some Valve maps (#6)
   
