@@ -441,7 +441,7 @@ public void PrecacheModels(bool map)
     char modelsPath[64];
     Format(modelsPath, sizeof(modelsPath), "%s", g_bLegacyModels ? LEGACY_MODELS_PATH : MODELS_PATH);
 
-    if (map && HasMapModels(NTEAM_T) && HasMapModels(NTEAM_CT)) {
+    if (map && HasMapModels(TEAM_T) && HasMapModels(TEAM_CT)) {
 
         PrecacheModelsArrayList(g_aMapTModels, modelsPath);
         PrecacheModelsArrayList(g_aMapCTModels, modelsPath);
@@ -455,7 +455,7 @@ public void PrecacheModels(bool map)
 
 public void PrecacheArms(bool map)
 {
-    if (map && HasMapArms(NTEAM_T) && HasMapArms(NTEAM_CT)) {
+    if (map && HasMapArms(TEAM_T) && HasMapArms(TEAM_CT)) {
         PrecacheModelsArray(g_aMapArms, sizeof(g_aMapArms));
     } else {
         PrecacheModelsArray(g_aDefaultArms, sizeof(g_aDefaultArms));
